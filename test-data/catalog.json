@@ -1,0 +1,23 @@
+[
+  {
+    "id": "prod_mug",
+    "variant": "variant_mug",
+    "title": "Ceramic Mug",
+    "price": 1299,
+    "stock": 5
+  },
+  {
+    "id": "prod_book",
+    "variant": "variant_book",
+    "title": "Notebook",
+    "price": 799,
+    "stock": 2
+  },
+  {
+    "id": "prod_pen",
+    "variant": "variant_pen",
+    "title": "Ink Pen",
+    "price": 249,
+    "stock": 0
+  }
+]

@@ -1,0 +1,2911 @@
+{
+  "info": {
+    "name": "E-commerce checkout contract",
+    "description": "Synthetic Medusa-shaped workflow and explicit fixture-only rules.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "publishableKey",
+      "value": "fixture-store-key"
+    }
+  ],
+  "item": [
+    {
+      "name": "EC-01 | Read seeded catalog",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-01 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-01 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-01 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.products.length === 3 && data.count === 3)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-02 | First page with limit one",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-02 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-02 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-02 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.products.length === 1 && data.count === 3)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?limit=1"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-03 | Read page two",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-03 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-03 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-03 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.products.length === 1 && data.count === 3)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?limit=1&offset=1"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-04 | Offset equals result count",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-04 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-04 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-04 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.products.length === 0 && data.count === 3)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?offset=3"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-05 | Search case insensitive title",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-05 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-05 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-05 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.products.length === 1 && data.count === 1)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?q=muG"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-06 | Search returns empty collection",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-06 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-06 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-06 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.products.length === 0 && data.count === 0)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?q=not-a-fixture-product"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-07 | Maximum page size",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-07 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-07 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-07 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.products.length === 3 && data.count === 3)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?limit=50"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-08 | Zero page size",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-08 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-08 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-08 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_PAGE')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?limit=0"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-09 | Over max page size",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-09 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-09 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-09 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_PAGE')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?limit=51"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-10 | Negative offset",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-10 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-10 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-10 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_PAGE')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?offset=-1"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-11 | Fractional page size",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-11 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-11 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-11 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_PAGE')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?limit=1.5"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-12 | Require store key",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [401];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-12 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-12 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-12 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'STORE_KEY_REQUIRED')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/store/products"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-13 | Reject unknown region",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [422];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-13 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-13 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-13 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'REGION_REQUIRED')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"region_id\": \"unknown\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-14 | Create empty cart",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-14 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-14 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-14 | contract conditions\", () => {",
+              "    pm.expect(Boolean(typeof data.cart.id === \"string\" && data.cart.total === 0)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.cart.id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"cartId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"region_id\": \"reg_fixture\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-15 | Retrieve created cart",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-15 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-15 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-15 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.id === get(\"cartId\") && data.cart.items.length === 0)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-16 | Missing cart",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [404];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-16 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-16 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-16 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'CART_NOT_FOUND')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/missing"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-17 | Reject empty checkout",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-17 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-17 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-17 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'CART_EMPTY')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/complete"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-18 | Reject zero quantity",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-18 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-18 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-18 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_QUANTITY')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_mug\",\n  \"quantity\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-19 | Reject negative quantity",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-19 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-19 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-19 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_QUANTITY')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_mug\",\n  \"quantity\": -1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-20 | Reject fractional quantity",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-20 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-20 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-20 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_QUANTITY')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_mug\",\n  \"quantity\": 1.25\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-21 | Reject quoted quantity",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-21 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-21 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-21 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_QUANTITY')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_mug\",\n  \"quantity\": \"1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-22 | Reject quantity above contract maximum",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-22 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-22 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-22 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_QUANTITY')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_mug\",\n  \"quantity\": 11\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-23 | Reject nonexistent variant",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [404];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-23 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-23 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-23 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'VARIANT_NOT_FOUND')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_missing\",\n  \"quantity\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-24 | Reject out of stock variant",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-24 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-24 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-24 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INSUFFICIENT_STOCK')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_pen\",\n  \"quantity\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-25 | Reject one unit over stock",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-25 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-25 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-25 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INSUFFICIENT_STOCK')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_mug\",\n  \"quantity\": 6\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-26 | Rejections leave cart unchanged",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-26 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-26 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-26 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.items.length === 0 && data.cart.total === 0)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-27 | Accept quantity of one",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-27 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-27 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-27 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.subtotal === 1299 && data.cart.items[0].quantity === 1)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.cart.items[0].id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"lineId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_mug\",\n  \"quantity\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-28 | Repeated add merges the same variant",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-28 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-28 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-28 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.items.length === 1 && data.cart.items[0].quantity === 2)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_mug\",\n  \"quantity\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-29 | Update line to the exact stock limit",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-29 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-29 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-29 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.items[0].quantity === 5 && data.cart.subtotal === 6495)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items/{{lineId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quantity\": 5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-30 | Reject an overstock update",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-30 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-30 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-30 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INSUFFICIENT_STOCK')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items/{{lineId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quantity\": 6\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-31 | Reduce quantity before placing order",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-31 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-31 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-31 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.items[0].quantity === 2 && data.cart.subtotal === 2598)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items/{{lineId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quantity\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-32 | Add a second variant",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-32 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-32 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-32 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.items.length === 2 && data.cart.subtotal === 3397)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.cart.items[1].id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"bookLine\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"variant_book\",\n  \"quantity\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-33 | Remove a line and recalculate",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-33 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-33 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-33 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.items.length === 1 && data.cart.subtotal === 2598)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items/{{bookLine}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-34 | Reject missing line removal",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [404];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-34 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-34 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-34 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'LINE_NOT_FOUND')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items/unknown"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-35 | Reject unknown promotion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [422];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-35 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-35 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-35 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'PROMO_INVALID')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/promotions",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_codes\": [\n    \"WRONG\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-36 | Apply fixture discount",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-36 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-36 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-36 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.discount_total === 259 && data.cart.total === 2339)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/promotions",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_codes\": [\n    \"QA10\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-37 | Repeated promotion does not stack",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-37 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-37 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-37 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.discount_total === 259)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/promotions",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_codes\": [\n    \"QA10\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-38 | Reject shipping without address",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-38 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-38 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-38 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'ADDRESS_REQUIRED')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/shipping-methods",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"option_id\": \"ship_ground\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-39 | Reject invalid email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [422];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-39 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-39 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-39 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_DETAILS')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"bad\",\n  \"shipping_address\": {\n    \"country_code\": \"us\",\n    \"address_1\": \"100 Test Street\",\n    \"city\": \"Test City\",\n    \"postal_code\": \"10001\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-40 | Reject missing country",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [422];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-40 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-40 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-40 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'INVALID_DETAILS')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"tester@example.test\",\n  \"shipping_address\": {}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-41 | Accept synthetic checkout address",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-41 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-41 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-41 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.email === \"tester@example.test\" && data.cart.shipping_address.country_code === \"us\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"tester@example.test\",\n  \"shipping_address\": {\n    \"country_code\": \"us\",\n    \"address_1\": \"100 Test Street\",\n    \"city\": \"Test City\",\n    \"postal_code\": \"10001\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-42 | Reject unknown shipping option",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [404];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-42 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-42 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-42 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'SHIPPING_NOT_FOUND')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/shipping-methods",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"option_id\": \"missing\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-43 | Apply shipping and reconcile total",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-43 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-43 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-43 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.shipping_total === 500 && data.cart.total === 2839)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/shipping-methods",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"option_id\": \"ship_ground\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-44 | Reject completion with no payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-44 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-44 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-44 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'PAYMENT_REQUIRED')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/complete"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-45 | Simulate declined payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-45 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-45 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-45 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.payment === \"declined\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/fixture-payment",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"declined\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-46 | A declined payment cannot create an order",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-46 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-46 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-46 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'PAYMENT_REQUIRED')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/complete"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-47 | Failed checkout preserves stock",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-47 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-47 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-47 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.available === 5)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/fixture/inventory/variant_mug"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-48 | Simulate approved payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-48 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-48 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-48 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.payment === \"approved\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/fixture-payment",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"approved\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-49 | Complete the cart and create an order",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-49 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-49 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-49 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.type === \"order\" && data.order.cart_id === get(\"cartId\") && data.order.total === 2839)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.order.id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"orderId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/complete"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-50 | Retrieve the persisted order",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-50 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-50 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-50 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.order.id === get(\"orderId\") && data.order.items[0].quantity === 2)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/orders/{{orderId}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-51 | Verify final stock deduction",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-51 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-51 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-51 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.available === 3)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/fixture/inventory/variant_mug"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-52 | Reject repeat completion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-52 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-52 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-52 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'CART_COMPLETED')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/complete"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-53 | Repeat completion leaves stock unchanged",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-53 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-53 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-53 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.available === 3)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/fixture/inventory/variant_mug"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-54 | Reject post-completion item changes",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-54 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-54 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-54 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'CART_COMPLETED')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items/{{lineId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quantity\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-55 | Create a second cart for cancellation",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-55 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-55 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-55 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.items.length === 0)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.cart.id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"cancelCart\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"region_id\": \"reg_fixture\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-56 | Cancel second checkout before payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-56 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-56 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-56 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.cart.canceled === true)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cancelCart}}/fixture-cancel"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-57 | Canceled cart cannot complete",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [409];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-57 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-57 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-57 | domain error code\", () => {",
+              "    pm.expect(Boolean(data.code === 'CART_CANCELED')).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cancelCart}}/complete"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "EC-58 | Canceled checkout preserves available stock",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"EC-58 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"EC-58 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"EC-58 | contract conditions\", () => {",
+              "    pm.expect(Boolean(data.available === 3)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/fixture/inventory/variant_mug"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    }
+  ]
+}

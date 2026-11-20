@@ -1,0 +1,697 @@
+{
+  "info": {
+    "name": "Medusa v2 seeded checkout integration",
+    "description": "Opt-in collection for a separately configured local Medusa v2 instance.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [],
+  "item": [
+    {
+      "name": "MD-01 | Read seeded product",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-01 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-01 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-01 | catalog returned item\", () => {",
+              "    pm.expect(Boolean(Array.isArray(data.products) && data.products.length === 1 && data.products[0].variants.length > 0)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.products[0].variants[0].id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"variantId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/products?limit=1&q={{productQuery}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-02 | Create cart in seeded region",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-02 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-02 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-02 | cart ID\", () => {",
+              "    pm.expect(Boolean(typeof data.cart.id === \"string\")).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.cart.id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"cartId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"region_id\": \"{{regionId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-03 | Add a seeded variant",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-03 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-03 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-03 | line exists\", () => {",
+              "    pm.expect(Boolean(data.cart.items[0].variant_id === get(\"variantId\") && data.cart.items[0].quantity === 1)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.cart.items[0].id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"lineId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"variant_id\": \"{{variantId}}\",\n  \"quantity\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-04 | Update line quantity",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-04 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-04 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-04 | quantity updated\", () => {",
+              "    pm.expect(Boolean(data.cart.items.some(i => i.id === get(\"lineId\") && i.quantity === 2))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/line-items/{{lineId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quantity\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-05 | Set email and checkout addresses",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-05 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-05 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-05 | email accepted\", () => {",
+              "    pm.expect(Boolean(data.cart.email === \"checkout@example.test\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"checkout@example.test\",\n  \"shipping_address\": {\n    \"country_code\": \"{{shipCountry}}\",\n    \"address_1\": \"100 Test Street\",\n    \"city\": \"{{shipCity}}\",\n    \"postal_code\": \"{{shipPostalCode}}\",\n    \"first_name\": \"Synthetic\",\n    \"last_name\": \"Tester\"\n  },\n  \"billing_address\": {\n    \"country_code\": \"{{shipCountry}}\",\n    \"address_1\": \"100 Test Street\",\n    \"city\": \"{{shipCity}}\",\n    \"postal_code\": \"{{shipPostalCode}}\",\n    \"first_name\": \"Synthetic\",\n    \"last_name\": \"Tester\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-06 | Choose configured shipping option",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-06 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-06 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-06 | shipping method is selectable\", () => {",
+              "    pm.expect(Boolean(Array.isArray(data.shipping_options) && data.shipping_options.length > 0)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.shipping_options[0].id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"shippingOption\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/shipping-options?cart_id={{cartId}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-07 | Attach shipping method",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-07 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-07 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-07 | shipping method present\", () => {",
+              "    pm.expect(Boolean(Array.isArray(data.cart.shipping_methods) && data.cart.shipping_methods.length > 0)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/shipping-methods",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"option_id\": \"{{shippingOption}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-08 | Create payment collection",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-08 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-08 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-08 | payment collection ID\", () => {",
+              "    pm.expect(Boolean(typeof data.payment_collection.id === \"string\")).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.payment_collection.id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"paymentCollection\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/payment-collections",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cart_id\": \"{{cartId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-09 | Initialize local test payment session",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-09 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-09 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-09 | payment session exists\", () => {",
+              "    pm.expect(Boolean(Array.isArray(data.payment_collection.payment_sessions) && data.payment_collection.payment_sessions.length > 0)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/payment-collections/{{paymentCollection}}/payment-sessions",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"provider_id\": \"{{paymentProvider}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "MD-10 | Complete seeded checkout",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
+              "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"MD-10 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"MD-10 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"MD-10 | order rather than cart error\", () => {",
+              "    pm.expect(Boolean(data.type === \"order\" && typeof data.order.id === \"string\")).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.order.id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"orderId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-publishable-api-key",
+            "value": "{{publishableKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/store/carts/{{cartId}}/complete"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    }
+  ]
+}

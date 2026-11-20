@@ -1,0 +1,1097 @@
+{
+  "info": {
+    "name": "DummyJSON public API regression",
+    "description": "Public synthetic service with simulated cart writes.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [],
+  "item": [
+    {
+      "name": "DJ-01 | Reject missing bearer",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [401];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-01 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-01 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-01 | error message\", () => {",
+              "    pm.expect(Boolean(typeof data.message === \"string\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/auth/me"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-02 | Reject invalid login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [400];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-02 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-02 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-02 | error message\", () => {",
+              "    pm.expect(Boolean(typeof data.message === \"string\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{demoUser}}\",\n  \"password\": \"wrong-example\",\n  \"expiresInMins\": 10\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-03 | Login and capture tokens",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-03 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-03 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-03 | demo identity\", () => {",
+              "    pm.expect(Boolean(data.username === get(\"demoUser\"))).to.equal(true);",
+              "  });",
+              "  pm.test(\"DJ-03 | token shapes\", () => {",
+              "    pm.expect(Boolean(data.accessToken.split(\".\").length === 3 && data.refreshToken.split(\".\").length === 3)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.accessToken;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"accessToken\", value);",
+              "    }",
+              "  }",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.refreshToken;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"refreshToken\", value);",
+              "    }",
+              "  }",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"userId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{demoUser}}\",\n  \"password\": \"{{demoPassword}}\",\n  \"expiresInMins\": 10\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-04 | Fetch current user with captured token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-04 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-04 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-04 | identity matches login\", () => {",
+              "    pm.expect(Boolean(data.username === get(\"demoUser\") && data.id === Number(get(\"userId\")))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/me"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-05 | Refresh and capture token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-05 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-05 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-05 | access token available\", () => {",
+              "    pm.expect(Boolean(typeof data.accessToken === \"string\")).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.accessToken;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"accessToken\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/refresh",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\",\n  \"expiresInMins\": 10\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-06 | Use the refreshed token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-06 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-06 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-06 | identity unchanged\", () => {",
+              "    pm.expect(Boolean(data.id === Number(get(\"userId\")))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/me"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-07 | Read default catalog with schema checks",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-07 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-07 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-07 | pagination invariant\", () => {",
+              "    pm.expect(Boolean(Array.isArray(data.products) && data.products.length === data.limit && data.total >= data.limit)).to.equal(true);",
+              "  });",
+              "  pm.test(\"DJ-07 | product records\", () => {",
+              "    pm.expect(Boolean(data.products.every(p => Number.isInteger(p.id) && typeof p.title === \"string\" && typeof p.price === \"number\" && p.price >= 0))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-08 | Read catalog page of one",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-08 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-08 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-08 | one result at offset zero\", () => {",
+              "    pm.expect(Boolean(data.limit === 1 && data.skip === 0 && data.products.length === 1)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.products[0].id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"firstProduct\", value);",
+              "    }",
+              "  }",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.total;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"totalProducts\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products?limit=1&skip=0"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-09 | Page two has a distinct product",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-09 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-09 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-09 | second page\", () => {",
+              "    pm.expect(Boolean(data.skip === 1 && data.products.length === 1 && data.products[0].id !== Number(get(\"firstProduct\")))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products?limit=1&skip=1"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-10 | Zero limit returns all products",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-10 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-10 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-10 | unbounded result matches total\", () => {",
+              "    pm.expect(Boolean(data.products.length === data.total && data.total > 0)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products?limit=0"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-11 | Offset equal to total is empty",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-11 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-11 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-11 | boundary page is empty\", () => {",
+              "    pm.expect(Boolean(Array.isArray(data.products) && data.products.length === 0)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products?limit=1&skip={{totalProducts}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-12 | Product field projection",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-12 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-12 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-12 | selected values only\", () => {",
+              "    pm.expect(Boolean(typeof data.products[0].title === \"string\" && typeof data.products[0].price === \"number\" && data.products[0].description === undefined)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products?limit=1&select=title,price"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-13 | Product details by known ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-13 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-13 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-13 | shape and matching ID\", () => {",
+              "    pm.expect(Boolean(data.id === Number(get(\"firstProduct\")) && typeof data.category === \"string\" && Array.isArray(data.images))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/{{firstProduct}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-14 | Missing product returns 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [404];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-14 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-14 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-14 | error message\", () => {",
+              "    pm.expect(Boolean(typeof data.message === \"string\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/99999999"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-15 | Search for phones",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-15 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-15 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-15 | non-empty search results\", () => {",
+              "    pm.expect(Boolean(data.products.length > 0 && data.products.length <= 5 && data.total >= data.products.length)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/search?q=phone&limit=5"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-16 | Search with unmatched term",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-16 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-16 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-16 | no matches\", () => {",
+              "    pm.expect(Boolean(data.total === 0 && data.products.length === 0)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/search?q=qa-unmatched-term-xzs"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-17 | Filter products by known category",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-17 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-17 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-17 | all entries match requested category\", () => {",
+              "    pm.expect(Boolean(data.products.length > 0 && data.products.every(p => p.category === \"smartphones\"))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/category/smartphones?limit=3"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-18 | Read carts with pagination",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-18 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-18 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-18 | cart page shape\", () => {",
+              "    pm.expect(Boolean(data.carts.length === 2 && data.total >= 2)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/carts?limit=2"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-19 | Read and reconcile known cart",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-19 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-19 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-19 | cart ID\", () => {",
+              "    pm.expect(Boolean(data.id === 1)).to.equal(true);",
+              "  });",
+              "  pm.test(\"DJ-19 | cart totals\", () => {",
+              "    pm.expect(Boolean(data.products.length === data.totalProducts && data.products.reduce((sum, p) => sum + p.quantity, 0) === data.totalQuantity && Math.abs(data.products.reduce((sum, p) => sum + p.total, 0) - data.total) < 0.06)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.total;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"originalCartTotal\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/carts/1"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-20 | Missing cart returns 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [404];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-20 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-20 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-20 | error message\", () => {",
+              "    pm.expect(Boolean(typeof data.message === \"string\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/carts/99999999"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-21 | Simulate cart creation",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [201];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-21 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-21 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-21 | simulated lines and count\", () => {",
+              "    pm.expect(Boolean(data.id > 0 && data.totalQuantity === 2 && data.products.length === data.totalProducts && data.products.reduce((sum, p) => sum + p.quantity, 0) === data.totalQuantity && Math.abs(data.products.reduce((sum, p) => sum + p.total, 0) - data.total) < 0.06)).to.equal(true);",
+              "  });",
+              "  if (data !== null && expectedStatus.includes(responseStatus)) {",
+              "    const value = data.id;",
+              "    if (value !== undefined && value !== null) {",
+              "      pm.collectionVariables.set(\"simulatedCartId\", value);",
+              "    }",
+              "  }",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/carts/add",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": {{userId}},\n  \"products\": [\n    {\n      \"id\": {{firstProduct}},\n      \"quantity\": 2\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-22 | Confirm created cart is not persisted",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [404];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-22 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-22 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-22 | error message\", () => {",
+              "    pm.expect(Boolean(typeof data.message === \"string\")).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/carts/{{simulatedCartId}}"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-23 | Simulate cart replacement",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-23 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-23 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-23 | replacement totals\", () => {",
+              "    pm.expect(Boolean(data.id === 1 && data.totalQuantity === 1 && data.products.length === data.totalProducts && data.products.reduce((sum, p) => sum + p.quantity, 0) === data.totalQuantity && Math.abs(data.products.reduce((sum, p) => sum + p.total, 0) - data.total) < 0.06)).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/carts/1",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"products\": [\n    {\n      \"id\": {{firstProduct}},\n      \"quantity\": 1\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-24 | Simulate cart deletion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-24 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-24 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-24 | deletion metadata\", () => {",
+              "    pm.expect(Boolean(data.isDeleted === true && Number.isFinite(Date.parse(data.deletedOn)))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/carts/1"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    },
+    {
+      "name": "DJ-25 | Confirm original cart still exists",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(() => {",
+              "  const expectedStatus = [200];",
+              "  const responseStatus = pm.response.code;",
+              "  pm.test(\"DJ-25 | expected HTTP status\", () => {",
+              "    pm.expect(responseStatus).to.be.oneOf(expectedStatus);",
+              "  });",
+              "  const get = (key) => pm.variables.get(key);",
+              "  let data;",
+              "  try { data = pm.response.json(); } catch { data = null; }",
+              "  pm.test(\"DJ-25 | JSON response body\", () => {",
+              "    pm.expect(data).not.to.equal(null);",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/json/i);",
+              "  });",
+              "  pm.test(\"DJ-25 | stored totals were unchanged\", () => {",
+              "    pm.expect(Boolean(data.id === 1 && data.total === Number(get(\"originalCartTotal\")))).to.equal(true);",
+              "  });",
+              "})();"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/carts/1"
+      },
+      "protocolProfileBehavior": {
+        "disableCookies": true
+      }
+    }
+  ]
+}

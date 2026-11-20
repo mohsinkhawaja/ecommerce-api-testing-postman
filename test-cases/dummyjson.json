@@ -1,0 +1,340 @@
+{
+  "name": "DummyJSON public API regression",
+  "description": "Public synthetic service with simulated cart writes.",
+  "variables": {},
+  "cases": [
+    {
+      "id": "DJ-01",
+      "title": "Reject missing bearer",
+      "path": "/auth/me",
+      "status": 401,
+      "method": "GET",
+      "assertions": {
+        "error message": "typeof data.message === \"string\""
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-02",
+      "title": "Reject invalid login",
+      "path": "/auth/login",
+      "status": 400,
+      "method": "POST",
+      "assertions": {
+        "error message": "typeof data.message === \"string\""
+      },
+      "body": {
+        "username": "{{demoUser}}",
+        "password": "wrong-example",
+        "expiresInMins": 10
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-03",
+      "title": "Login and capture tokens",
+      "path": "/auth/login",
+      "status": 200,
+      "method": "POST",
+      "assertions": {
+        "demo identity": "data.username === get(\"demoUser\")",
+        "token shapes": "data.accessToken.split(\".\").length === 3 && data.refreshToken.split(\".\").length === 3"
+      },
+      "body": {
+        "username": "{{demoUser}}",
+        "password": "{{demoPassword}}",
+        "expiresInMins": 10
+      },
+      "capture": {
+        "accessToken": "data.accessToken",
+        "refreshToken": "data.refreshToken",
+        "userId": "data.id"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-04",
+      "title": "Fetch current user with captured token",
+      "path": "/auth/me",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "identity matches login": "data.username === get(\"demoUser\") && data.id === Number(get(\"userId\"))"
+      },
+      "headers": {
+        "Authorization": "Bearer {{accessToken}}"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-05",
+      "title": "Refresh and capture token",
+      "path": "/auth/refresh",
+      "status": 200,
+      "method": "POST",
+      "assertions": {
+        "access token available": "typeof data.accessToken === \"string\""
+      },
+      "body": {
+        "refreshToken": "{{refreshToken}}",
+        "expiresInMins": 10
+      },
+      "capture": {
+        "accessToken": "data.accessToken"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-06",
+      "title": "Use the refreshed token",
+      "path": "/auth/me",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "identity unchanged": "data.id === Number(get(\"userId\"))"
+      },
+      "headers": {
+        "Authorization": "Bearer {{accessToken}}"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-07",
+      "title": "Read default catalog with schema checks",
+      "path": "/products",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "pagination invariant": "Array.isArray(data.products) && data.products.length === data.limit && data.total >= data.limit",
+        "product records": "data.products.every(p => Number.isInteger(p.id) && typeof p.title === \"string\" && typeof p.price === \"number\" && p.price >= 0)"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-08",
+      "title": "Read catalog page of one",
+      "path": "/products?limit=1&skip=0",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "one result at offset zero": "data.limit === 1 && data.skip === 0 && data.products.length === 1"
+      },
+      "capture": {
+        "firstProduct": "data.products[0].id",
+        "totalProducts": "data.total"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-09",
+      "title": "Page two has a distinct product",
+      "path": "/products?limit=1&skip=1",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "second page": "data.skip === 1 && data.products.length === 1 && data.products[0].id !== Number(get(\"firstProduct\"))"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-10",
+      "title": "Zero limit returns all products",
+      "path": "/products?limit=0",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "unbounded result matches total": "data.products.length === data.total && data.total > 0"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-11",
+      "title": "Offset equal to total is empty",
+      "path": "/products?limit=1&skip={{totalProducts}}",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "boundary page is empty": "Array.isArray(data.products) && data.products.length === 0"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-12",
+      "title": "Product field projection",
+      "path": "/products?limit=1&select=title,price",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "selected values only": "typeof data.products[0].title === \"string\" && typeof data.products[0].price === \"number\" && data.products[0].description === undefined"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-13",
+      "title": "Product details by known ID",
+      "path": "/products/{{firstProduct}}",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "shape and matching ID": "data.id === Number(get(\"firstProduct\")) && typeof data.category === \"string\" && Array.isArray(data.images)"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-14",
+      "title": "Missing product returns 404",
+      "path": "/products/99999999",
+      "status": 404,
+      "method": "GET",
+      "assertions": {
+        "error message": "typeof data.message === \"string\""
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-15",
+      "title": "Search for phones",
+      "path": "/products/search?q=phone&limit=5",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "non-empty search results": "data.products.length > 0 && data.products.length <= 5 && data.total >= data.products.length"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-16",
+      "title": "Search with unmatched term",
+      "path": "/products/search?q=qa-unmatched-term-xzs",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "no matches": "data.total === 0 && data.products.length === 0"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-17",
+      "title": "Filter products by known category",
+      "path": "/products/category/smartphones?limit=3",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "all entries match requested category": "data.products.length > 0 && data.products.every(p => p.category === \"smartphones\")"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-18",
+      "title": "Read carts with pagination",
+      "path": "/carts?limit=2",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "cart page shape": "data.carts.length === 2 && data.total >= 2"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-19",
+      "title": "Read and reconcile known cart",
+      "path": "/carts/1",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "cart ID": "data.id === 1",
+        "cart totals": "data.products.length === data.totalProducts && data.products.reduce((sum, p) => sum + p.quantity, 0) === data.totalQuantity && Math.abs(data.products.reduce((sum, p) => sum + p.total, 0) - data.total) < 0.06"
+      },
+      "capture": {
+        "originalCartTotal": "data.total"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-20",
+      "title": "Missing cart returns 404",
+      "path": "/carts/99999999",
+      "status": 404,
+      "method": "GET",
+      "assertions": {
+        "error message": "typeof data.message === \"string\""
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-21",
+      "title": "Simulate cart creation",
+      "path": "/carts/add",
+      "status": 201,
+      "method": "POST",
+      "assertions": {
+        "simulated lines and count": "data.id > 0 && data.totalQuantity === 2 && data.products.length === data.totalProducts && data.products.reduce((sum, p) => sum + p.quantity, 0) === data.totalQuantity && Math.abs(data.products.reduce((sum, p) => sum + p.total, 0) - data.total) < 0.06"
+      },
+      "body": {
+        "userId": "@number:userId",
+        "products": [
+          {
+            "id": "@number:firstProduct",
+            "quantity": 2
+          }
+        ]
+      },
+      "capture": {
+        "simulatedCartId": "data.id"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-22",
+      "title": "Confirm created cart is not persisted",
+      "path": "/carts/{{simulatedCartId}}",
+      "status": 404,
+      "method": "GET",
+      "assertions": {
+        "error message": "typeof data.message === \"string\""
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-23",
+      "title": "Simulate cart replacement",
+      "path": "/carts/1",
+      "status": 200,
+      "method": "PUT",
+      "assertions": {
+        "replacement totals": "data.id === 1 && data.totalQuantity === 1 && data.products.length === data.totalProducts && data.products.reduce((sum, p) => sum + p.quantity, 0) === data.totalQuantity && Math.abs(data.products.reduce((sum, p) => sum + p.total, 0) - data.total) < 0.06"
+      },
+      "body": {
+        "products": [
+          {
+            "id": "@number:firstProduct",
+            "quantity": 1
+          }
+        ]
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-24",
+      "title": "Simulate cart deletion",
+      "path": "/carts/1",
+      "status": 200,
+      "method": "DELETE",
+      "assertions": {
+        "deletion metadata": "data.isDeleted === true && Number.isFinite(Date.parse(data.deletedOn))"
+      },
+      "cookieJar": false
+    },
+    {
+      "id": "DJ-25",
+      "title": "Confirm original cart still exists",
+      "path": "/carts/1",
+      "status": 200,
+      "method": "GET",
+      "assertions": {
+        "stored totals were unchanged": "data.id === 1 && data.total === Number(get(\"originalCartTotal\"))"
+      },
+      "cookieJar": false
+    }
+  ]
+}
