@@ -22,8 +22,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -49,8 +54,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -77,8 +87,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -101,8 +116,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -141,8 +161,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -165,8 +190,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -189,8 +219,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -216,8 +251,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -240,8 +280,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     },
@@ -264,8 +309,13 @@
       "setup": [
         "const base = pm.variables.replaceIn(\"{{baseUrl}}\");",
         "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1):[0-9]+$/.test(base)) {",
+        "  pm.test(\"Disposable loopback Medusa target required\", () => pm.expect(false).to.equal(true));",
         "  pm.execution.skipRequest();",
-        "  throw new Error(\"Set baseUrl to the disposable localhost target without trailing slash\");",
+        "}",
+        "const required = [\"publishableKey\", \"regionId\", \"productQuery\", \"shipCity\", \"shipPostalCode\", \"shipCountry\", \"paymentProvider\"];",
+        "if (required.some((key) => !String(pm.variables.get(key) ?? \"\").trim())) {",
+        "  pm.test(\"Configure the seeded Medusa environment\", () => pm.expect(false).to.equal(true));",
+        "  pm.execution.skipRequest();",
         "}"
       ]
     }

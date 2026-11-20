@@ -6,7 +6,7 @@ Newman regression suites for catalog, cart, and checkout contracts. The reposito
 | --- | ---: | --- |
 | Local synthetic checkout | 58 | CI checks for cart state, quantity limits, promotions, payment outcomes, and inventory effects |
 | DummyJSON | 25 | Login and token refresh, product schema and pagination, search, and simulated cart CRUD |
-| Local Medusa v2 | 10 | Opt-in checkout from seeded product through order creation |
+| Local Medusa 2.18.0 | 10 | Checkout verified against a seeded Medusa instance |
 
 ## Run the reproducible regression
 
